@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"time"
 )
 
 type stocksArray []singleStock
@@ -22,7 +23,7 @@ var (
 	body     []byte
 )
 
-func main() {
+func stockticker() {
 	// Use http://finance.google.com/finance/info?client=ig&q=NASDAQ:GOOG to get a JSON response
 	response, err = http.Get("http://finance.google.com/finance/info?client=ig&q=NASDAQ:GOOG,NASDAQ:AAPL,NASDAQ:MSFT")
 	if err != nil {
@@ -48,5 +49,22 @@ func main() {
 	}
 
 	fmt.Println(stocks)
+}
 
+func main() {
+	// Initial function call
+	stockticker()
+
+	// Implement ticker that makes new request ever 5 seconds
+	ticker := time.NewTicker(time.Millisecond * 5000)
+	go func() {
+		for range ticker.C {
+			stockticker()
+		}
+	}()
+
+	// Stop program after 5 minutes
+	time.Sleep(time.Minute * 5)
+	ticker.Stop()
+	fmt.Println("Stockticker stopped.")
 }
