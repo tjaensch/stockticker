@@ -8,7 +8,12 @@ import (
 	"net/http"
 )
 
-type stocksArray []map[string]string
+type stocksArray []singleStock
+
+type singleStock struct {
+	Name   string `json:"t"`
+	Amount string `json:"l"`
+}
 
 var (
 	err      error
